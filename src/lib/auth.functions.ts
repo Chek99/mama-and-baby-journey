@@ -246,7 +246,7 @@ const verifyCodeSchema = z.object({ challengeId: z.string().uuid(), code: z.stri
 export const staffLoginVerifyCode = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => verifyCodeSchema.parse(d))
   .handler(
-    async ({ data }): Promise<Fail | { ok: true; session: SessionTokens; portal: string; mustChangePassword: boolean; deviceToken?: string }> => {
+    async ({ data }): Promise<Fail | { ok: true; session: SessionTokens; portal: string; mustChangePassword: boolean; deviceToken?: string | undefined }> => {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const sec = await import("./security.server");
       if (await sec.rateLimited(`2fa:ip:${sec.requestMeta().ip}`, 40)) return fail("locked");
@@ -273,7 +273,7 @@ const backupSchema = z.object({ challengeId: z.string().uuid(), backupCode: z.st
 export const staffLoginUseBackupCode = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => backupSchema.parse(d))
   .handler(
-    async ({ data }): Promise<Fail | { ok: true; session: SessionTokens; portal: string; mustChangePassword: boolean; deviceToken?: string }> => {
+    async ({ data }): Promise<Fail | { ok: true; session: SessionTokens; portal: string; mustChangePassword: boolean; deviceToken?: string | undefined }> => {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const sec = await import("./security.server");
       if (await sec.rateLimited(`2fa:ip:${sec.requestMeta().ip}`, 40)) return fail("locked");
@@ -340,7 +340,7 @@ export const resendStaffCode = createServerFn({ method: "POST" })
 export const confirmEmailLinkSignIn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ challengeId: z.string().uuid() }).parse(d))
-  .handler(async ({ data, context }): Promise<Fail | { ok: true; portal: string; mustChangePassword: boolean; deviceToken?: string }> => {
+  .handler(async ({ data, context }): Promise<Fail | { ok: true; portal: string; mustChangePassword: boolean; deviceToken?: string | undefined }> => {
     const sec = await import("./security.server");
     const res = await loadOpenChallenge(data.challengeId);
     if ("error" in res) return fail(res.error!);
@@ -515,7 +515,7 @@ export const completePasswordReset = createServerFn({ method: "POST" })
     const fromRecovery = amr.some((m) => m.method === "recovery" || m.method === "otp");
     const sentAt = user?.recovery_sent_at ? new Date(user.recovery_sent_at).getTime() : 0;
     if (!user || !fromRecovery || !sentAt || Date.now() - sentAt > RESET_LINK_TTL_MS) return fail("expired");
-    if (!isPasswordAcceptable(data.password, { email: user.email })) return { ok: false, error: "weak_password" };
+    if (!isPasswordAcceptable(data.password, { email: user.email ?? null })) return { ok: false, error: "weak_password" };
     if (await pw.isReusedPassword(user.id, data.password)) return { ok: false, error: "reused_password" };
     if (!(await pw.setUserPassword(user.id, data.password))) return { ok: false, error: "weak_password" };
 

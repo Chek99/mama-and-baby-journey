@@ -8,9 +8,9 @@ import { isSmsTextSafe } from "./sms-templates";
 
 export interface SmsSendResult {
   ok: boolean;
-  messageId?: string;
+  messageId?: string | undefined;
   status: string;
-  error?: string;
+  error?: string | undefined;
 }
 
 export interface SmsProvider {
