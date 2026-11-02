@@ -115,7 +115,7 @@ export function StaffLoginForm() {
 function TwoFactorStep({ challengeId, maskedEmail, onRestart }: { challengeId: string; maskedEmail: string; onRestart: () => void }) {
   const { t } = useI18n();
   const verify = useServerFn(staffLoginVerifyCode);
-  const useBackup = useServerFn(staffLoginUseBackupCode);
+  const verifyBackup = useServerFn(staffLoginUseBackupCode);
   const resend = useServerFn(resendStaffCode);
   const finish = useFinishSignIn();
   const { left, restart } = useCountdown(60);
@@ -134,7 +134,7 @@ function TwoFactorStep({ challengeId, maskedEmail, onRestart }: { challengeId: s
       const res =
         mode === "code"
           ? await verify({ data: { challengeId, code: value ?? code } })
-          : await useBackup({ data: { challengeId, backupCode: backup } });
+          : await verifyBackup({ data: { challengeId, backupCode: backup } });
       if (!res.ok) {
         setError(res.error);
         setCode("");
