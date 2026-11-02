@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ChangePasswordRouteImport } from './routes/change-password'
@@ -17,14 +18,22 @@ import { Route as ChvRouteImport } from './routes/chv'
 import { Route as ClinicianRouteImport } from './routes/clinician'
 import { Route as FacilityRouteImport } from './routes/facility'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as HelpRouteImport } from './routes/help'
 import { Route as MotherRouteImport } from './routes/mother'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SetupRouteImport } from './routes/setup'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as VerifySignInRouteImport } from './routes/verify-sign-in'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -62,9 +71,19 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MotherRoute = MotherRouteImport.update({
   id: '/mother',
   path: '/mother',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -77,6 +96,11 @@ const SetupRoute = SetupRouteImport.update({
   path: '/setup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VerifySignInRoute = VerifySignInRouteImport.update({
   id: '/verify-sign-in',
   path: '/verify-sign-in',
@@ -85,6 +109,7 @@ const VerifySignInRoute = VerifySignInRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/change-password': typeof ChangePasswordRoute
@@ -92,13 +117,17 @@ export interface FileRoutesByFullPath {
   '/clinician': typeof ClinicianRoute
   '/facility': typeof FacilityRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/help': typeof HelpRoute
   '/mother': typeof MotherRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/setup': typeof SetupRoute
+  '/terms': typeof TermsRoute
   '/verify-sign-in': typeof VerifySignInRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/change-password': typeof ChangePasswordRoute
@@ -106,14 +135,18 @@ export interface FileRoutesByTo {
   '/clinician': typeof ClinicianRoute
   '/facility': typeof FacilityRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/help': typeof HelpRoute
   '/mother': typeof MotherRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/setup': typeof SetupRoute
+  '/terms': typeof TermsRoute
   '/verify-sign-in': typeof VerifySignInRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/change-password': typeof ChangePasswordRoute
@@ -121,15 +154,19 @@ export interface FileRoutesById {
   '/clinician': typeof ClinicianRoute
   '/facility': typeof FacilityRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/help': typeof HelpRoute
   '/mother': typeof MotherRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/setup': typeof SetupRoute
+  '/terms': typeof TermsRoute
   '/verify-sign-in': typeof VerifySignInRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
     | '/admin'
     | '/auth'
     | '/change-password'
@@ -137,13 +174,17 @@ export interface FileRouteTypes {
     | '/clinician'
     | '/facility'
     | '/forgot-password'
+    | '/help'
     | '/mother'
+    | '/privacy'
     | '/reset-password'
     | '/setup'
+    | '/terms'
     | '/verify-sign-in'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
     | '/admin'
     | '/auth'
     | '/change-password'
@@ -151,13 +192,17 @@ export interface FileRouteTypes {
     | '/clinician'
     | '/facility'
     | '/forgot-password'
+    | '/help'
     | '/mother'
+    | '/privacy'
     | '/reset-password'
     | '/setup'
+    | '/terms'
     | '/verify-sign-in'
   id:
     | '__root__'
     | '/'
+    | '/account'
     | '/admin'
     | '/auth'
     | '/change-password'
@@ -165,14 +210,18 @@ export interface FileRouteTypes {
     | '/clinician'
     | '/facility'
     | '/forgot-password'
+    | '/help'
     | '/mother'
+    | '/privacy'
     | '/reset-password'
     | '/setup'
+    | '/terms'
     | '/verify-sign-in'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   ChangePasswordRoute: typeof ChangePasswordRoute
@@ -180,9 +229,12 @@ export interface RootRouteChildren {
   ClinicianRoute: typeof ClinicianRoute
   FacilityRoute: typeof FacilityRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  HelpRoute: typeof HelpRoute
   MotherRoute: typeof MotherRoute
+  PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SetupRoute: typeof SetupRoute
+  TermsRoute: typeof TermsRoute
   VerifySignInRoute: typeof VerifySignInRoute
 }
 
@@ -193,6 +245,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -244,11 +303,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mother': {
       id: '/mother'
       path: '/mother'
       fullPath: '/mother'
       preLoaderRoute: typeof MotherRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -265,6 +338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SetupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verify-sign-in': {
       id: '/verify-sign-in'
       path: '/verify-sign-in'
@@ -277,6 +357,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   ChangePasswordRoute: ChangePasswordRoute,
@@ -284,9 +365,12 @@ const rootRouteChildren: RootRouteChildren = {
   ClinicianRoute: ClinicianRoute,
   FacilityRoute: FacilityRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  HelpRoute: HelpRoute,
   MotherRoute: MotherRoute,
+  PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SetupRoute: SetupRoute,
+  TermsRoute: TermsRoute,
   VerifySignInRoute: VerifySignInRoute,
 }
 export const routeTree = rootRouteImport

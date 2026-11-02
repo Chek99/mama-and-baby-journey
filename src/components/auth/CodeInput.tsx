@@ -25,7 +25,7 @@ export function CodeInput({
       maxLength={6}
       value={value}
       onChange={onChange}
-      onComplete={onComplete}
+      {...(onComplete ? { onComplete } : {})}
       disabled={disabled}
       autoFocus
       inputMode="numeric"

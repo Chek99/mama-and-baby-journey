@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PortalShell } from "@/components/portal/PortalShell";
+import { StaffManager } from "@/components/portal/StaffManager";
 import { requirePortal } from "@/lib/me-query";
 
 export const Route = createFileRoute("/facility")({
@@ -12,8 +13,8 @@ export const Route = createFileRoute("/facility")({
 function Page() {
   const me = Route.useRouteContext();
   return (
-    <PortalShell me={me} title="Hospital admin">
-      <p className="text-muted-foreground">You are signed in as a hospital admin. The staff list (add, change role, deactivate) is the next screen to build.</p>
+    <PortalShell me={me} title="Staff">
+      <StaffManager scope="facility" />
     </PortalShell>
   );
 }

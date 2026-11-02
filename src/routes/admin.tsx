@@ -7,7 +7,8 @@ import { PortalShell } from "@/components/portal/PortalShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { listAuditLogs, listFacilities, saveFacility, setFacilityActive } from "@/lib/admin.functions";
+import { StaffManager } from "@/components/portal/StaffManager";
+import { getSettings, listAuditLogs, listFacilities, saveFacility, setFacilityActive, updateSetting } from "@/lib/admin.functions";
 import { requirePortal } from "@/lib/me-query";
 
 export const Route = createFileRoute("/admin")({
@@ -17,20 +18,86 @@ export const Route = createFileRoute("/admin")({
   component: AdminHome,
 });
 
+const TABS = [
+  { id: "hospitals", label: "Hospitals" },
+  { id: "admins", label: "Hospital admins" },
+  { id: "settings", label: "Settings" },
+  { id: "audit", label: "Audit log" },
+] as const;
+
 function AdminHome() {
   const me = Route.useRouteContext();
-  const [tab, setTab] = useState<"hospitals" | "audit">("hospitals");
+  const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("hospitals");
   return (
     <PortalShell me={me} title="System admin">
-      <div role="tablist" className="flex gap-2">
-        {(["hospitals", "audit"] as const).map((k) => (
-          <Button key={k} type="button" role="tab" aria-selected={tab === k} variant={tab === k ? "role" : "outline"} onClick={() => setTab(k)}>
-            {k === "hospitals" ? "Hospitals" : "Audit log"}
+      <div role="tablist" className="flex flex-wrap gap-2">
+        {TABS.map((k) => (
+          <Button key={k.id} type="button" role="tab" aria-selected={tab === k.id} variant={tab === k.id ? "role" : "outline"} onClick={() => setTab(k.id)}>
+            {k.label}
           </Button>
         ))}
       </div>
-      {tab === "hospitals" ? <Hospitals /> : <AuditLog />}
+      {tab === "hospitals" && <Hospitals />}
+      {tab === "admins" && <StaffManager scope="hospital_admins" />}
+      {tab === "settings" && <Settings />}
+      {tab === "audit" && <AuditLog />}
     </PortalShell>
+  );
+}
+
+const SETTING_LABEL: Record<string, string> = {
+  mother_can_view_full_schedule: "Mothers can see the full vaccine schedule",
+  staff_idle_timeout_minutes: "Staff sign-out after idle (minutes, 5–120)",
+  mother_idle_timeout_minutes: "Mother/CHV sign-out after idle (minutes, 5–240)",
+};
+
+function Settings() {
+  const queryClient = useQueryClient();
+  const fetchSettings = useServerFn(getSettings);
+  const save = useServerFn(updateSetting);
+  const { data, isLoading, error } = useQuery({ queryKey: ["settings"], queryFn: () => fetchSettings() });
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [msg, setMsg] = useState<{ tone: "error" | "success"; text: string } | null>(null);
+  const update = useMutation({
+    mutationFn: (v: { key: string; value: boolean | number }) => save({ data: v }),
+    onSuccess: () => {
+      setMsg({ tone: "success", text: "Saved." });
+      void queryClient.invalidateQueries({ queryKey: ["settings"] });
+    },
+    onError: () => setMsg({ tone: "error", text: "That value isn't allowed." }),
+  });
+  if (isLoading) return <Spinner />;
+  if (error || !data) return <FormMessage>Could not load settings.</FormMessage>;
+  return (
+    <section className="space-y-4">
+      {msg && <FormMessage tone={msg.tone}>{msg.text}</FormMessage>}
+      {data.map((s) => (
+        <div key={s.key} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-muted/50 p-4">
+          <div>
+            <p className="font-bold">{SETTING_LABEL[s.key] ?? s.key}</p>
+            {s.description && <p className="text-sm text-muted-foreground">{s.description}</p>}
+          </div>
+          {typeof s.value === "boolean" ? (
+            <Button type="button" variant={s.value ? "role" : "outline"} disabled={update.isPending} onClick={() => update.mutate({ key: s.key, value: !s.value })}>
+              {s.value ? "On" : "Off"}
+            </Button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Input
+                aria-label={SETTING_LABEL[s.key] ?? s.key}
+                className="w-24"
+                inputMode="numeric"
+                value={drafts[s.key] ?? String(s.value)}
+                onChange={(e) => setDrafts({ ...drafts, [s.key]: e.target.value })}
+              />
+              <Button type="button" variant="outline" disabled={update.isPending} onClick={() => update.mutate({ key: s.key, value: Number(drafts[s.key] ?? s.value) })}>
+                Save
+              </Button>
+            </div>
+          )}
+        </div>
+      ))}
+    </section>
   );
 }
 

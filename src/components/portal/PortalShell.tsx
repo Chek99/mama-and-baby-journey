@@ -1,12 +1,13 @@
 import type { ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import { LogOut } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { LogOut, UserRound } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
 import { BrandMark } from "@/components/brand";
 import { LanguageSwitch, OfflineBanner } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { useIdleTimeout } from "@/hooks/use-idle-timeout";
-import type { MeDto } from "@/lib/account.functions";
+import { setMyLanguage, type MeDto } from "@/lib/account.functions";
 import { signOutApp } from "@/lib/client-auth";
 import { useI18n } from "@/lib/i18n";
 
@@ -15,6 +16,7 @@ export function PortalShell({ me, title, children }: { me: MeDto; title: string;
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const saveLanguage = useServerFn(setMyLanguage);
 
   const signOut = async () => {
     await signOutApp(queryClient);
@@ -31,7 +33,13 @@ export function PortalShell({ me, title, children }: { me: MeDto; title: string;
       <header className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-4 pt-4">
         <BrandMark name={t("app.name")} />
         <div className="flex items-center gap-3">
-          <LanguageSwitch />
+          <LanguageSwitch onChange={(l) => void saveLanguage({ data: { language: l } }).catch(() => undefined)} />
+          <Button asChild variant="outline" size="sm">
+            <Link to="/account">
+              <UserRound className="size-4" aria-hidden="true" />
+              {t("common.account")}
+            </Link>
+          </Button>
           <Button type="button" variant="outline" size="sm" onClick={() => void signOut()}>
             <LogOut className="size-4" aria-hidden="true" />
             {t("common.signOut")}
