@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useState, type ComponentProps, type ReactNode } from "react";
 import { AlertCircle, CheckCircle2, Eye, EyeOff, Globe, Loader2, WifiOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -77,7 +77,7 @@ export function Spinner({ className }: { className?: string }) {
 }
 
 export function PasswordInput(
-  props: Omit<React.ComponentProps<typeof Input>, "type"> & { id: string },
+  props: Omit<ComponentProps<typeof Input>, "type"> & { id: string },
 ) {
   const [show, setShow] = useState(false);
   const { t } = useI18n();
