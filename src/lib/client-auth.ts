@@ -1,16 +1,18 @@
 /**
- * Browser-side session helpers. Sessions are issued by the server only after
+ * Browser-side session helpers. Sessions are issued by the backend only after
  * full sign-in; the browser just stores them.
  */
 import type { QueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { recordSignOut } from "./account.functions";
+import { clearSession, getSession, recordSignOut, setSession, type SessionTokens } from "./api";
 
 const DEVICE_KEY = "mnm.device";
 
-export async function applySession(tokens: { access_token: string; refresh_token: string }) {
-  const { error } = await supabase.auth.setSession(tokens);
-  if (error) throw error;
+export async function applySession(tokens: SessionTokens) {
+  setSession(tokens);
+}
+
+export function hasSession(): boolean {
+  return getSession() !== null;
 }
 
 export function getDeviceToken(): string | undefined {
@@ -37,14 +39,14 @@ export function asPortal(path: string): PortalPath | "/" {
   return (PORTAL_PATHS as readonly string[]).includes(path) ? (path as PortalPath) : "/";
 }
 
-/** Ordered sign-out: stop queries, drop cached data, end session. */
+/** Ordered sign-out: tell the backend, stop queries, drop cached data, forget the session. */
 export async function signOutApp(queryClient: QueryClient) {
   try {
-    await recordSignOut();
+    if (hasSession()) await recordSignOut();
   } catch {
     /* already signed out on the server */
   }
   await queryClient.cancelQueries();
   queryClient.clear();
-  await supabase.auth.signOut({ scope: "local" });
+  clearSession();
 }
