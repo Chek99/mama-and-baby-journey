@@ -40,16 +40,16 @@ export interface FacilityDto {
 }
 
 export interface FacilityInput {
-  id?: string;
+  id?: string | undefined;
   name: string;
-  mflCode?: string;
+  mflCode?: string | undefined;
   county: string;
-  subCounty?: string;
-  ward?: string;
-  phone?: string;
-  email?: string;
-  address?: string;
-  services?: string[];
+  subCounty?: string | undefined;
+  ward?: string | undefined;
+  phone?: string | undefined;
+  email?: string | undefined;
+  address?: string | undefined;
+  services?: string[] | undefined;
 }
 
 export interface AuditDto {
@@ -91,14 +91,14 @@ export interface StaffDto {
 
 export interface AddStaffInput {
   role: "hospital_admin" | "clinician" | "chv";
-  facilityId?: string;
+  facilityId?: string | undefined;
   fullName: string;
-  email?: string;
-  phone?: string;
-  staffId?: string;
-  licenceNumber?: string;
-  cadre?: string;
-  ward?: string;
+  email?: string | undefined;
+  phone?: string | undefined;
+  staffId?: string | undefined;
+  licenceNumber?: string | undefined;
+  cadre?: string | undefined;
+  ward?: string | undefined;
 }
 
 export type SignedIn = { ok: true; session: SessionTokens; portal: string; mustChangePassword: boolean; deviceToken?: string | undefined };
