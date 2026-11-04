@@ -1,12 +1,11 @@
 import { useState, type FormEvent } from "react";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { NewPasswordFields } from "@/components/auth/NewPasswordFields";
 import { FormMessage, Spinner } from "@/components/common";
 import { Button } from "@/components/ui/button";
-import { changePassword } from "@/lib/account.functions";
+import { changePassword } from "@/lib/api";
 import { asPortal } from "@/lib/client-auth";
 import { useI18n } from "@/lib/i18n";
 import { meQueryOptions } from "@/lib/me-query";
@@ -29,7 +28,7 @@ function ChangePasswordPage() {
   const me = Route.useRouteContext();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const change = useServerFn(changePassword);
+  const change = changePassword;
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [touched, setTouched] = useState(false);

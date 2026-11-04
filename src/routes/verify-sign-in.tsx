@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { useFinishSignIn } from "@/components/auth/useFinishSignIn";
 import { FormMessage, Spinner } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { confirmEmailLinkSignIn } from "@/lib/auth.functions";
+import { confirmEmailLinkSignIn } from "@/lib/api";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/verify-sign-in")({
@@ -29,7 +28,7 @@ export const Route = createFileRoute("/verify-sign-in")({
 function VerifySignInPage() {
   const { t } = useI18n();
   const { c } = Route.useSearch();
-  const confirm = useServerFn(confirmEmailLinkSignIn);
+  const confirm = confirmEmailLinkSignIn;
   const finish = useFinishSignIn();
   const [failed, setFailed] = useState(false);
   const started = useRef(false);

@@ -2,12 +2,11 @@ import type { ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { LogOut, UserRound } from "lucide-react";
-import { useServerFn } from "@tanstack/react-start";
 import { BrandMark } from "@/components/brand";
 import { LanguageSwitch, OfflineBanner } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { useIdleTimeout } from "@/hooks/use-idle-timeout";
-import { setMyLanguage, type MeDto } from "@/lib/account.functions";
+import { setMyLanguage, type MeDto } from "@/lib/api";
 import { signOutApp } from "@/lib/client-auth";
 import { useI18n } from "@/lib/i18n";
 
@@ -16,7 +15,7 @@ export function PortalShell({ me, title, children }: { me: MeDto; title: string;
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const saveLanguage = useServerFn(setMyLanguage);
+  const saveLanguage = setMyLanguage;
 
   const signOut = async () => {
     await signOutApp(queryClient);

@@ -1,5 +1,4 @@
 import { useState, type FormEvent } from "react";
-import { useServerFn } from "@tanstack/react-start";
 import { MessageSquareText, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { FieldError, FormMessage, Spinner } from "@/components/common";
 import { CodeInput } from "./CodeInput";
 import { useFinishSignIn } from "./useFinishSignIn";
-import { requestPhoneCode, verifyPhoneCode } from "@/lib/auth.functions";
+import { requestPhoneCode, verifyPhoneCode } from "@/lib/api";
 import type { PublicAuthError } from "@/lib/auth-rules";
 import { useI18n } from "@/lib/i18n";
 import { maskPhone, normalizeKenyanPhone } from "@/lib/phone";
@@ -16,8 +15,8 @@ import { useCountdown } from "@/hooks/use-countdown";
 /** Phone number + SMS code. Used by mothers, guardians and CHVs, and for first-visit activation. */
 export function PhoneOtpForm({ purpose, onToggleActivate }: { purpose: "sign_in" | "activate"; onToggleActivate: () => void }) {
   const { t, lang } = useI18n();
-  const request = useServerFn(requestPhoneCode);
-  const verify = useServerFn(verifyPhoneCode);
+  const request = requestPhoneCode;
+  const verify = verifyPhoneCode;
   const finish = useFinishSignIn();
   const { left, restart } = useCountdown(60);
   const [local, setLocal] = useState("");

@@ -1,13 +1,12 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { NewPasswordFields } from "@/components/auth/NewPasswordFields";
 import { SuccessIllustration } from "@/components/brand";
 import { FormMessage, Spinner, StepIndicator } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { completePasswordReset } from "@/lib/auth.functions";
+import { completePasswordReset } from "@/lib/api";
 import { isPasswordAcceptable } from "@/lib/password-rules";
 import { useI18n } from "@/lib/i18n";
 
@@ -29,7 +28,7 @@ export const Route = createFileRoute("/reset-password")({
 
 function ResetPasswordPage() {
   const { t } = useI18n();
-  const complete = useServerFn(completePasswordReset);
+  const complete = completePasswordReset;
   const [state, setState] = useState<"waiting" | "ready" | "expired" | "done">("waiting");
   const [email, setEmail] = useState<string | null>(null);
   const [password, setPassword] = useState("");

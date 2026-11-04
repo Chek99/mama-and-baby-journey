@@ -1,13 +1,12 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { Copy } from "lucide-react";
 import { FormMessage, Spinner } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { listFacilities } from "@/lib/admin.functions";
-import { addStaff, changeStaffRole, issueTemporaryPassword, listStaff, setStaffActive, type StaffDto } from "@/lib/staff.functions";
+import { listFacilities } from "@/lib/api";
+import { addStaff, changeStaffRole, issueTemporaryPassword, listStaff, setStaffActive, type StaffDto } from "@/lib/api";
 
 const ROLE_LABEL: Record<string, string> = {
   hospital_admin: "Hospital admin",
@@ -59,12 +58,12 @@ function TempPassword({ who, password, onClose }: { who: string; password: strin
  */
 export function StaffManager({ scope }: { scope: "facility" | "hospital_admins" }) {
   const queryClient = useQueryClient();
-  const fetchStaff = useServerFn(listStaff);
-  const fetchFacilities = useServerFn(listFacilities);
-  const add = useServerFn(addStaff);
-  const changeRole = useServerFn(changeStaffRole);
-  const setActive = useServerFn(setStaffActive);
-  const tempPw = useServerFn(issueTemporaryPassword);
+  const fetchStaff = listStaff;
+  const fetchFacilities = listFacilities;
+  const add = addStaff;
+  const changeRole = changeStaffRole;
+  const setActive = setStaffActive;
+  const tempPw = issueTemporaryPassword;
 
   const key = ["staff", scope];
   const staff = useQuery({ queryKey: key, queryFn: () => fetchStaff({ data: { scope } }) });
