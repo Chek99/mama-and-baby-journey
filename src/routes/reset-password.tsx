@@ -61,11 +61,6 @@ function ResetPasswordPage() {
     <AuthLayout wide={false}>
       <div className="space-y-6">
         <StepIndicator step={state === "done" ? 3 : state === "ready" ? 3 : 2} label={t("reset.step", { n: 3 })} />
-        {state === "waiting" && (
-          <div className="flex items-center justify-center gap-3 py-8 text-muted-foreground" role="status">
-            <Spinner /> {t("reset.waiting")}
-          </div>
-        )}
         {state === "expired" && (
           <div className="space-y-5">
             <FormMessage>{t("reset.expired")}</FormMessage>
@@ -77,7 +72,7 @@ function ResetPasswordPage() {
         {state === "ready" && (
           <form onSubmit={onSubmit} noValidate className="space-y-5">
             <h1 className="text-2xl font-extrabold">{t("reset.newTitle")}</h1>
-            {error && <FormMessage>{error}</FormMessage>}
+            {error && <FormMessage>{t(`auth.error.${error}`)}</FormMessage>}
             <NewPasswordFields
               password={password}
               confirm={confirm}
