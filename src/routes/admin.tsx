@@ -1,14 +1,13 @@
 import { useState, type FormEvent } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { FormMessage, Spinner } from "@/components/common";
 import { PortalShell } from "@/components/portal/PortalShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { StaffManager } from "@/components/portal/StaffManager";
-import { getSettings, listAuditLogs, listFacilities, saveFacility, setFacilityActive, updateSetting } from "@/lib/admin.functions";
+import { getSettings, listAuditLogs, listFacilities, saveFacility, setFacilityActive, updateSetting } from "@/lib/api";
 import { requirePortal } from "@/lib/me-query";
 
 export const Route = createFileRoute("/admin")({
@@ -53,8 +52,8 @@ const SETTING_LABEL: Record<string, string> = {
 
 function Settings() {
   const queryClient = useQueryClient();
-  const fetchSettings = useServerFn(getSettings);
-  const save = useServerFn(updateSetting);
+  const fetchSettings = getSettings;
+  const save = updateSetting;
   const { data, isLoading, error } = useQuery({ queryKey: ["settings"], queryFn: () => fetchSettings() });
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [msg, setMsg] = useState<{ tone: "error" | "success"; text: string } | null>(null);
@@ -103,9 +102,9 @@ function Settings() {
 
 function Hospitals() {
   const queryClient = useQueryClient();
-  const fetchFacilities = useServerFn(listFacilities);
-  const save = useServerFn(saveFacility);
-  const toggle = useServerFn(setFacilityActive);
+  const fetchFacilities = listFacilities;
+  const save = saveFacility;
+  const toggle = setFacilityActive;
   const { data, isLoading, error } = useQuery({ queryKey: ["facilities"], queryFn: () => fetchFacilities() });
   const [name, setName] = useState("");
   const [mfl, setMfl] = useState("");
@@ -205,7 +204,7 @@ function Hospitals() {
 }
 
 function AuditLog() {
-  const fetchLogs = useServerFn(listAuditLogs);
+  const fetchLogs = listAuditLogs;
   const { data, isLoading, error } = useQuery({ queryKey: ["audit"], queryFn: () => fetchLogs({ data: {} }) });
   if (isLoading) {
     return (

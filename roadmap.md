@@ -1,16 +1,15 @@
 # Roadmap
 
-## Phase 1 — accounts, roles, hospitals, staff, audit, sign-in
-- [x] Database, roles, security rules, sign-in server actions
-- [x] Design system (colours, font)
-- [ ] English/Kiswahili text, sign-in, 2FA, phone code, reset, first-run setup screens
-- [ ] System admin: hospitals, hospital admins, audit log, settings
-- [ ] Hospital admin: staff list, add, role change, deactivate, temporary password, audit
-- [ ] Empty portal homes (clinician, mother, CHV), account page (password, backup codes, sign out everywhere)
-- [ ] Privacy, terms, help pages
-- [ ] Tests: password rules, generic errors, expiry, permissions, SMS wording
-- [ ] Blocked: Africa's Talking username/API key (needed for SMS codes)
-- [ ] Blocked: email domain for branded staff emails (optional for now)
+Frontend-only: the user builds the backend. Contract: docs/BACKEND_API.md.
+
+## Phase 1 — accounts, roles, hospitals, staff, audit, sign-in (screens)
+- [x] Design system (colours, font), English/Kiswahili text
+- [x] Sign-in, 2FA, phone code, reset, first-run setup screens
+- [x] System admin: hospitals, hospital admins, audit log, settings
+- [x] Hospital admin: staff list, add, role change, deactivate, temporary password
+- [x] Portal homes, account page, privacy/terms/help
+- [x] Screens connected to the user's backend through one address; backend guide written
+- [ ] Blocked: user's backend address (VITE_API_URL) — sign-in works once their backend is running
 
 ## Later phases
 - Phase 2+: see docs/MASTER_PROMPT.md section 10. Wait for approval before each phase.

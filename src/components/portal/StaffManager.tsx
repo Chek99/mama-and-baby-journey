@@ -1,13 +1,12 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { Copy } from "lucide-react";
 import { FormMessage, Spinner } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { listFacilities } from "@/lib/admin.functions";
-import { addStaff, changeStaffRole, issueTemporaryPassword, listStaff, setStaffActive, type StaffDto } from "@/lib/staff.functions";
+import { listFacilities } from "@/lib/api";
+import { addStaff, changeStaffRole, issueTemporaryPassword, listStaff, setStaffActive, type StaffDto } from "@/lib/api";
 
 const ROLE_LABEL: Record<string, string> = {
   hospital_admin: "Hospital admin",
@@ -59,12 +58,12 @@ function TempPassword({ who, password, onClose }: { who: string; password: strin
  */
 export function StaffManager({ scope }: { scope: "facility" | "hospital_admins" }) {
   const queryClient = useQueryClient();
-  const fetchStaff = useServerFn(listStaff);
-  const fetchFacilities = useServerFn(listFacilities);
-  const add = useServerFn(addStaff);
-  const changeRole = useServerFn(changeStaffRole);
-  const setActive = useServerFn(setStaffActive);
-  const tempPw = useServerFn(issueTemporaryPassword);
+  const fetchStaff = listStaff;
+  const fetchFacilities = listFacilities;
+  const add = addStaff;
+  const changeRole = changeStaffRole;
+  const setActive = setStaffActive;
+  const tempPw = issueTemporaryPassword;
 
   const key = ["staff", scope];
   const staff = useQuery({ queryKey: key, queryFn: () => fetchStaff({ data: { scope } }) });
@@ -124,7 +123,7 @@ export function StaffManager({ scope }: { scope: "facility" | "hospital_admins" 
 
   const act = useMutation({
     mutationFn: (v: { kind: "active" | "inactive" | "role" | "password"; s: StaffDto; role?: "hospital_admin" | "clinician" }) => {
-      if (v.kind === "role") return changeRole({ data: { userId: v.s.userId, role: v.role } }).then(() => null);
+      if (v.kind === "role") return v.role ? changeRole({ data: { userId: v.s.userId, role: v.role } }).then(() => null) : Promise.resolve(null);
       if (v.kind === "password") return tempPw({ data: { userId: v.s.userId } }).then((r) => (r.ok ? { who: v.s.fullName, password: r.tempPassword } : null));
       return setActive({ data: { userId: v.s.userId, active: v.kind === "active" } }).then(() => null);
     },

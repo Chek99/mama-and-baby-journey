@@ -1,13 +1,12 @@
 import { useState, type FormEvent } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { NewPasswordFields } from "@/components/auth/NewPasswordFields";
 import { FormMessage, PasswordInput, Spinner } from "@/components/common";
 import { PortalShell } from "@/components/portal/PortalShell";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { backupCodeStatus, changePassword, generateBackupCodes, signOutEverywhere } from "@/lib/account.functions";
+import { backupCodeStatus, changePassword, generateBackupCodes, signOutEverywhere } from "@/lib/api";
 import { asPortal, signOutApp } from "@/lib/client-auth";
 import { useI18n } from "@/lib/i18n";
 import { requirePortal } from "@/lib/me-query";
@@ -25,7 +24,7 @@ function AccountPage() {
   const me = Route.useRouteContext();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const everywhere = useServerFn(signOutEverywhere);
+  const everywhere = signOutEverywhere;
 
   const leaveAll = async () => {
     try {
@@ -56,7 +55,7 @@ function AccountPage() {
 
 function PasswordSection({ email }: { email: string | null }) {
   const { t } = useI18n();
-  const change = useServerFn(changePassword);
+  const change = changePassword;
   const [current, setCurrent] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -110,8 +109,8 @@ function PasswordSection({ email }: { email: string | null }) {
 function BackupCodes() {
   const { t } = useI18n();
   const queryClient = useQueryClient();
-  const status = useServerFn(backupCodeStatus);
-  const generate = useServerFn(generateBackupCodes);
+  const status = backupCodeStatus;
+  const generate = generateBackupCodes;
   const { data } = useQuery({ queryKey: ["backup-status"], queryFn: () => status() });
   const [codes, setCodes] = useState<string[] | null>(null);
   const [busy, setBusy] = useState(false);

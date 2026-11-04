@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, HeartHandshake, Settings2, Stethoscope } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
-import { getSetupStatus } from "@/lib/auth.functions";
+import { getSetupStatus } from "@/lib/api";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({

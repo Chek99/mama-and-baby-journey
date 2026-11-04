@@ -1,6 +1,5 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { MailCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -9,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { FieldError, FormMessage, PasswordInput, Spinner } from "@/components/common";
 import { CodeInput } from "./CodeInput";
 import { useFinishSignIn } from "./useFinishSignIn";
-import { resendStaffCode, staffLoginStart, staffLoginUseBackupCode, staffLoginVerifyCode } from "@/lib/auth.functions";
+import { resendStaffCode, staffLoginStart, staffLoginUseBackupCode, staffLoginVerifyCode } from "@/lib/api";
 import type { PublicAuthError } from "@/lib/auth-rules";
 import { getDeviceToken } from "@/lib/client-auth";
 import { useI18n } from "@/lib/i18n";
@@ -17,7 +16,7 @@ import { useCountdown } from "@/hooks/use-countdown";
 
 export function StaffLoginForm() {
   const { t } = useI18n();
-  const start = useServerFn(staffLoginStart);
+  const start = staffLoginStart;
   const finish = useFinishSignIn();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -114,9 +113,9 @@ export function StaffLoginForm() {
 
 function TwoFactorStep({ challengeId, maskedEmail, onRestart }: { challengeId: string; maskedEmail: string; onRestart: () => void }) {
   const { t } = useI18n();
-  const verify = useServerFn(staffLoginVerifyCode);
-  const verifyBackup = useServerFn(staffLoginUseBackupCode);
-  const resend = useServerFn(resendStaffCode);
+  const verify = staffLoginVerifyCode;
+  const verifyBackup = staffLoginUseBackupCode;
+  const resend = resendStaffCode;
   const finish = useFinishSignIn();
   const { left, restart } = useCountdown(60);
   const [mode, setMode] = useState<"code" | "backup">("code");

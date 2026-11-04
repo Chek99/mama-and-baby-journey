@@ -1,13 +1,12 @@
 import { useState, type FormEvent } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { MailCheck } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { FieldError, FormMessage, Spinner, StepIndicator } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { requestPasswordReset } from "@/lib/auth.functions";
+import { requestPasswordReset } from "@/lib/api";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/forgot-password")({
@@ -26,7 +25,7 @@ export const Route = createFileRoute("/forgot-password")({
 
 function ForgotPasswordPage() {
   const { t } = useI18n();
-  const request = useServerFn(requestPasswordReset);
+  const request = requestPasswordReset;
   const [identifier, setIdentifier] = useState("");
   const [busy, setBusy] = useState(false);
   const [touched, setTouched] = useState(false);

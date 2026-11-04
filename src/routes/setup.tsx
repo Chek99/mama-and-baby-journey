@@ -1,6 +1,5 @@
 import { useState, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { ShieldCheck } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
@@ -9,7 +8,7 @@ import { FieldError, FormMessage, PasswordInput, Spinner } from "@/components/co
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { bootstrapSystemAdmin, getSetupStatus } from "@/lib/auth.functions";
+import { bootstrapSystemAdmin, getSetupStatus } from "@/lib/api";
 import { isPasswordAcceptable } from "@/lib/password-rules";
 import { useI18n } from "@/lib/i18n";
 
@@ -33,7 +32,7 @@ export const Route = createFileRoute("/setup")({
 function SetupPage() {
   const { t } = useI18n();
   const status = Route.useLoaderData() as { needsSetup: boolean } | undefined;
-  const bootstrap = useServerFn(bootstrapSystemAdmin);
+  const bootstrap = bootstrapSystemAdmin;
   const navigate = useNavigate();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
