@@ -123,7 +123,7 @@ export function StaffManager({ scope }: { scope: "facility" | "hospital_admins" 
 
   const act = useMutation({
     mutationFn: (v: { kind: "active" | "inactive" | "role" | "password"; s: StaffDto; role?: "hospital_admin" | "clinician" }) => {
-      if (v.kind === "role") return changeRole({ data: { userId: v.s.userId, role: v.role } }).then(() => null);
+      if (v.kind === "role") return v.role ? changeRole({ data: { userId: v.s.userId, role: v.role } }).then(() => null) : Promise.resolve(null);
       if (v.kind === "password") return tempPw({ data: { userId: v.s.userId } }).then((r) => (r.ok ? { who: v.s.fullName, password: r.tempPassword } : null));
       return setActive({ data: { userId: v.s.userId, active: v.kind === "active" } }).then(() => null);
     },
