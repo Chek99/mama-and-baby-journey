@@ -1,19 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { useFinishSignIn } from "@/components/auth/useFinishSignIn";
 import { FormMessage, Spinner } from "@/components/common";
 import { Button } from "@/components/ui/button";
-import { confirmEmailLinkSignIn } from "@/lib/api";
+import { supabase } from "@/integrations/supabase/client";
+import { confirmEmailLinkSignIn } from "@/lib/auth.functions";
 import { useI18n } from "@/lib/i18n";
 
-// Email sign-in link: /verify-sign-in?c=<challengeId>&t=<linkToken>
 export const Route = createFileRoute("/verify-sign-in")({
   ssr: false,
-  validateSearch: (s: Record<string, unknown>): { c?: string; t?: string } => ({
-    ...(typeof s["c"] === "string" ? { c: s["c"] } : {}),
-    ...(typeof s["t"] === "string" ? { t: s["t"] } : {}),
-  }),
+  validateSearch: (s: Record<string, unknown>): { c?: string } => (typeof s["c"] === "string" ? { c: s["c"] } : {}),
   head: () => ({
     meta: [
       { title: "Confirming sign-in — Mama na Mtoto" },
@@ -30,7 +28,8 @@ export const Route = createFileRoute("/verify-sign-in")({
 
 function VerifySignInPage() {
   const { t } = useI18n();
-  const { c, t: token } = Route.useSearch();
+  const { c } = Route.useSearch();
+  const confirm = useServerFn(confirmEmailLinkSignIn);
   const finish = useFinishSignIn();
   const [failed, setFailed] = useState(false);
   const started = useRef(false);
@@ -38,20 +37,28 @@ function VerifySignInPage() {
   useEffect(() => {
     if (started.current) return;
     started.current = true;
-    if (!c || !token) {
-      setFailed(true);
-      return;
-    }
-    void (async () => {
+    const run = async () => {
+      // The email link puts a session in the address; give the client a moment to read it.
+      let session = (await supabase.auth.getSession()).data.session;
+      for (let i = 0; !session && i < 10; i++) {
+        await new Promise((r) => setTimeout(r, 300));
+        session = (await supabase.auth.getSession()).data.session;
+      }
+      if (!session || !c) {
+        setFailed(true);
+        return;
+      }
       try {
-        const res = await confirmEmailLinkSignIn({ data: { challengeId: c, token } });
+        const res = await confirm({ data: { challengeId: c } });
         if (!res.ok) throw new Error(res.error);
-        await finish(res);
+        await finish({ portal: res.portal, mustChangePassword: res.mustChangePassword, deviceToken: res.deviceToken });
       } catch {
+        await supabase.auth.signOut({ scope: "local" });
         setFailed(true);
       }
-    })();
-  }, [c, token, finish]);
+    };
+    void run();
+  }, [c, confirm, finish]);
 
   return (
     <AuthLayout wide={false}>
