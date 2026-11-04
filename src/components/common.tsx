@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useI18n, type Lang } from "@/lib/i18n";
 import { useOnline } from "@/hooks/use-online";
+import { isApiConfigured } from "@/lib/api/http";
 
 export function LanguageSwitch({ onChange }: { onChange?: ((l: Lang) => void) | undefined }) {
   const { lang, setLang, t } = useI18n();
@@ -35,6 +36,14 @@ export function LanguageSwitch({ onChange }: { onChange?: ((l: Lang) => void) | 
 export function OfflineBanner() {
   const online = useOnline();
   const { t } = useI18n();
+  if (!isApiConfigured()) {
+    return (
+      <div role="status" className="flex items-center justify-center gap-2 bg-warning-soft px-4 py-2 text-sm font-semibold text-warning-ink">
+        <AlertCircle className="size-4" aria-hidden="true" />
+        {t("common.noBackend")}
+      </div>
+    );
+  }
   if (online) return null;
   return (
     <div role="status" className="flex items-center justify-center gap-2 bg-warning-soft px-4 py-2 text-sm font-semibold text-warning-ink">
